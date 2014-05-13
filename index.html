@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>The Waffler</title>
+        <link href="http://fonts.googleapis.com/css?family=Lato:100,300,400,700" rel="stylesheet" type="text/css" />
+
+        <link rel="stylesheet" href="lib/css/style.css" />
+
+
+
+
+    </head>
+
+    <body>
+
+
+            <div id="intro">
+                <p>The Waffler puts you in the role of a politician seeking office. You're on the stump, fielding questions from the press and voters, who are eager to hear your views. As you answer, your popularity rises or falls based on how poll respondents feel about those issues.</p> 
+                <p>When similar questions come up, you can change your answer, but beware that voters might call you a waffler if you just pander to public opinion. Play the game, then see how your views line up with those of Pennsylvania's gubernatorial candidates. </p>
+
+            </div>    
+
+            
+
+            <div id="container" class="container-crowd">
+                
+            <div class="timercon">
+                <p class="labelsm">Time left to answer</p>	
+                <div class="labelbig" id="timeleft">5.0</div>
+                <p class="labelsm">SECONDS</p>	
+                <p id="missed">Too slow. The voters want you to be more decisive!</p>
+            </div>
+
+            <div id="questcon">
+                <p class="labelsm" id="question-number-div">Question <span id="number-of-questions">1</span> of 10</p>
+                <div class="labelmd" id="thequest">Can you gain support for your campaign ... without waffling too much?</div>
+
+                <div id="nav">
+                    <button class="btn" id="startbtn" onclick="start();">START</button>
+                    <button class="btn" id="seeresults" onclick="show_results();">SEE RESULTS</button>
+                    <button class="btn" id="yesbtn" onclick="grader(0);">YES</button>
+                    <button class="btn" id="nobtn" onclick="grader(1);">NO</button>
+                </div>
+
+            </div>
+
+            <div id="meter">
+                <p>your <br />popularity</p>
+                <div id="meterlabels">100%<br/>50<br/><span style="color:#FFF">0</span></div>
+                <div id="metercon"></div>
+            </div>
+
+            <div id="avatar"></div>
+            <div id="sourceCreds">
+                    Credits: Vaughn Hagerty, Nelson Hsu, Ed Mahon and Tom Meagher / DFM
+            </div>
+
+
+
+
+        </div>
+
+        <!--handlebars template for results topper-->
+
+        <script id="results-topper" type="text/x-handlebars-template">
+        <div class="labelmd">Results</div>
+
+        <table id="results-table">
+            <tbody>
+                <tr>
+                    <td class="tbl-header"></td>
+                    <td class="tbl-header2">
+                        <img src="lib/img/candidate.jpg" class="candidate-img" /> 
+                        Your <br />stance</td>
+                    <td class="tbl-header2">
+                        <img src="lib/img/guzzardi.jpg" class="candidate-img" /> 
+                        Robert Guzzardi (R) <a href="#guzzardi">*</a>
+                    </td>
+                    <td class="tbl-header2">
+                        <img src="lib/img/corbett.jpg" class="candidate-img" />
+                        Tom Corbett (R)
+                    </td>
+                    <td class="tbl-header2">
+                        <img src="lib/img/wolf.jpg" class="candidate-img" />
+                        Tom Wolf (D)
+                    </td>
+                    <td class="tbl-header2">
+                        <img src="lib/img/mccord.jpg" class="candidate-img" />
+                        Rob McCord (D)
+                    </td>
+                    <td class="tbl-header2">
+                        <img src="lib/img/mcginty.jpg" class="candidate-img" />
+                        Katie McGinty (D)
+                    </td>
+                    <td class="tbl-header2">
+                        <img src="lib/img/schwartz.jpg" class="candidate-img" />
+                        Allyson Y. Schwartz (D)
+                    </td>
+                </tr>
+        </script>
+
+        <!--handlebars template for results header-->
+
+        <script id="results-header" type="text/x-handlebars-template">
+        <tr class="issue-header-spacer">
+                    <td class="tbl-header2">&nbsp;</td>
+                    <td class="tbl-header2">&nbsp;</td>
+                    <td class="tbl-header2">&nbsp;</td>
+                    <td class="tbl-header2">&nbsp;</td>
+                    <td class="tbl-header2">&nbsp;</td>
+                    <td class="tbl-header2">&nbsp;</td>
+                    <td class="tbl-header2">&nbsp;</td>
+        
+        </tr>
+                <tr class="issue-header">
+                    <td class="tbl-header">{{{waffle}}} {{the_issue}}</td>
+                    <td class="tbl-header2" ></td>
+                    <td class="tbl-header2"></td>
+                    <td class="tbl-header2"></td>
+                    <td class="tbl-header2"></td>
+                    <td class="tbl-header2"></td>
+                    <td class="tbl-header2"></td>
+                    <td class="tbl-header2"></td>
+                </tr>
+        </script>
+
+        <!--handlebars template for results polls-->
+
+        <script id="results-poll" type="text/x-handlebars-template">
+                <tr>
+                    <td class="tbl-header">
+                        <span class="tbl-poll">
+                            <a href="{{source_link}}" target="_blank">Poll results</a>
+                            &ndash; Yes {{yes}}%; No {{no}}% 
+                        </span>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+        </script>
+
+        <!--handlebars template for results details: where the answers to questions show up-->
+
+        <script id="results-detail" type="text/x-handlebars-template">
+                <tr class="question">
+                    <td class="the-question">{{question_version}}</td>
+                    <td>{{player_answer}}</td>
+                    <td>{{{cand1_answer}}}</td>
+                    <td>{{{cand2_answer}}}</td>
+                    <td>{{{cand3_answer}}}</td>
+                    <td>{{{cand4_answer}}}</td>
+                    <td>{{{cand5_answer}}}</td>
+                    <td>{{{cand6_answer}}}</td>
+                    <td>{{{cand7_answer}}}</td>
+                </tr>
+        </script>
+
+
+        <!--handlebars template for results footer-->
+        <script id="results-footer" type="text/x-handlebars-template">
+            </tbody>
+        </table>
+        <div class="footer">
+            <p> For a deeper look at the candidates' stand on issues, 
+            visit the <a href="http://www.yorkblog.com/ydrpolitics/2014/04/22/how-we-determined-pa-guv-candidate-positions-for-the-waffler/">YDRPolitics blog.</a>
+            </p>
+            <p>
+                <a name="guzzardi"></a>* The state Supreme Court has ruled that Republican Robert Guzzardi did not meet certain requirements to be on the primary ballot. 
+                But some county elections offices have said he'll still appear on their ballots, because there's not enough time to remove his name.
+            </p>
+            </div>
+        </script>
+
+        <!--handlebars template for back button-->
+        <script id="back-button" type="text/x-handlebars-template">
+        <div id="nav">
+            <button class="btn" id="backbtn" onclick="replay();">BACK</button>
+            <p id="poll-disclaimer">Polls may not add up to 100 percent because we only use results for "yes/approve" or "no/disapprove" responses.</p>
+        </div>
+        </script>
+
+        <!--handlebars template for waffle icon-->
+        <script id="waffle-icon" type="text/x-handlebars-template">
+            <img class="waffle-image" src="lib/img/waffler16x16.gif"/>
+        </script>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="http://data.digitalfirstmedia.com/lib/js/handlebars-1.0.rc.1.js"></script>
+
+        <script type="text/javascript" src="lib/js/candidates_pa.js"></script>
+        <script type="text/javascript" src="lib/js/waffler.js"></script>
+
+    </body>
+</html>
